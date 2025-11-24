@@ -7,6 +7,11 @@ TZ = "America/Toronto"
 [build]
 publish = "public"
 command = """\
-  git config core.quotepath false && \
+  # Download Tailwind standalone binary
+  curl -sL -o tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.1.17/tailwindcss-linux-x64" && \
+  chmod +x tailwindcss && \
+  # Build Tailwind CSS
+  ./tailwindcss -i ./assets/css/tailwind.css -o ./static/css/tailwind.css --minify && \
+  # Build Hugo
   hugo --gc --minify --baseURL "${URL}"
-  """
+"""

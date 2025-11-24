@@ -1,0 +1,24 @@
+{
+  "htmlElements": {
+    "tags": [
+      "body",
+      "h1",
+      "head",
+      "html",
+      "meta",
+      "script",
+      "title"
+    ],
+    "classes": [
+      "font-semibold",
+      "max-w-4xl",
+      "mx-auto",
+      "text-4xl",
+      "text-red",
+      "text-red-500",
+      "text-xl",
+      "underline"
+    ],
+    "ids": null
+  }
+}

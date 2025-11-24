@@ -11,7 +11,7 @@ command = """\
   curl -sL -o tailwindcss "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.1.17/tailwindcss-linux-x64" && \
   chmod +x tailwindcss && \
   # Build Tailwind CSS
-  ./tailwindcss -i ./assets/css/tailwind.css -o ./static/css/tailwind.css --minify && \
+  ./tailwindcss -i ./assets/css/main.css -o ./static/css/main.css && \
   # Build Hugo
   hugo --gc --minify --baseURL "${URL}"
 """

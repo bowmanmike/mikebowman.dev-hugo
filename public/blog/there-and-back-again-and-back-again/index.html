@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>There and Back Again and Back Again and Back Again and Ba...</title>
+    
+      
+  
+  
+    
+      <link rel="stylesheet" href="/css/main.css">
+    
+  
+
+
+    
+  </head>
+  <body class="bg-slate-50">
+    <header>
+  <h1>Mike Bowman</h1>
+</header>
+
+
+    
+<article class="max-w-3xl mx-auto px-4 py-12 prose prose-slate">
+
+  <header class="mb-8">
+    <h1 class="text-4xl font-bold mb-2">There and Back Again and Back Again and Back Again and Ba...</h1>
+    <p class="text-sm text-slate-500">
+      October 21, 2022
+    </p>
+  </header>
+
+  <p>In an office in a city there lived a programmer. Sitting at his desk, (or
+standing, thanks to his adjustable desk), noice-cancelling headphones in place,
+typing away on his fancy keyboard with RGB backlights, happily immersed in
+Neovim. Err, wait. That&rsquo;s not right. Happily immersed in Visual Studio Code.
+Ahh, not quite. Happily immersed in Neovim. Dang. Doesn&rsquo;t feel right. Ok, last
+try. Unhappily immersed in whichever text editor he&rsquo;d happened to decide on for
+that week.</p>
+<p>Does this sound familiar? I surely can&rsquo;t be the only one out there who just
+can&rsquo;t seem to settle on a text editor. It feels silly, I feel like I&rsquo;m spending
+way too much mental energy on something so&hellip; boring? bland? uninteresting?
+unproductive? all of the above? Who knows. But since I&rsquo;m probably not the only
+person to have felt this way, I&rsquo;ve decided to share my experience a little, and
+hopefully shed some light on the value of things being <em>good enough</em>.</p>
+<p>In the beginning, I used Atom. It was what they suggested us to use when I was
+at my bootcamp. It was neat. It had cool colourschemes, and convenient keyboard
+shortcuts. No problems there. Until one day I decided to take a look at the
+mystical terminal-based text editor, Vim.</p>
+<p>Vim was a bit of a crazy experience. My first encounter with Vim in the wild was
+when I was first learning about Git and typed <code>git commit</code> in the terminal. I
+found myself in a screen I couldn&rsquo;t exit. Like so many others, I ended up just
+closing the terminal, before I was able to figure out that I was inside a
+program called Vim. Then, again, like so many others, I googled &ldquo;How to exit
+Vim?&rdquo;, and was led to
+<a href="https://stackoverflow.com/questions/11828270/how-do-i-exit-vim">one of the most popular Stack Overflow posts of all
+time</a>. This
+isn&rsquo;t a post about why vim and modal editing is undisputably the best way to
+edit text, so I won&rsquo;t go into detail. But suffice to say, once I figured out how
+to quit, I was in it. I loved it. I felt so fast, so slick, so cool. Flying
+around the document without using a mouse, coding at the speed of thought &ndash; it
+was awesome. I was hooked.</p>
+<p>Ok, it wasn&rsquo;t quite such smooth sailing. Vim is pretty barebones by default, so
+it didn&rsquo;t take long for me to fall down the rabbit hole of plugins and
+personalized configuration. While I forget the precise details, at some point I
+was pointed towards Neovim, a community-driven fork of the original Vim
+codebase. It promised async plugin execution, faster and more community-driven
+feature development, but an otherwise Vim-equivalent experience.</p>
+<p>So once again, I hopped over. I swapped out my old single-threaded plugins for
+new, fancy, Neovim-only plugins. I loved it. I had asynchronous linting and
+formatting of my code, I had a keyboard shortcut to run the test under my
+cursor, I could fuzzy-find files in a snap, and even live-grep the entire
+codebase without even thinking about it. Once again, I loved it.</p>
+<p>As Neovim matured, so did my configuration. Eventually, Neovim introduced Lua as
+a configuration language, supplementing the somewhat esoteric Vimscript it had
+been using before. This was a big jump. Plugins could be written in a nicer
+language, so plugins got better! Then Neovim added built-in support for the
+Language Server Protocol, and other awesome pieces like Treesitter. Between
+these two features, we were assured, you&rsquo;ll have complete support for <em>any</em>
+programming language you choose! It&rsquo;ll be perfect!</p>
+<p>Of course, these promises were <em>slightly</em> too good to be true. While you could
+certainly get Neovim configured with deep language integrations for just about
+anything, doing so took a lot of work. Getting LSP config files set up,
+installing, managing, and configuring external tools to do your formatting and
+linting, plugins with overlapping functionality &ndash; all this made it a bit of a
+pain. While I was able to get things <em>mostly</em> working, my setup always felt
+somewhat janky, and I often didn&rsquo;t <em>really</em> know how things were wired up under
+the hood.</p>
+<p>The attentive reader may have noticed at this point that I&rsquo;ve only spoken about
+(Neo)Vim, as if that is the only editor I&rsquo;ve used all these years, since I gave
+up on Atom. As the title of this article may indicate, that isn&rsquo;t quite the
+case. At some point during this journey, Microsoft released Visual Studio Code,
+which was a pretty direct competitor to Atom, and other desktop text editors.
+VSCode promised speed, extensibility, customizability, deep integrations with
+Javascript and Typescript (another Microsoft invention), and more. As often
+happens with things like this, I was tempted by the new shiny toy. So I
+downloaded it, gave it a go. It worked well, it was clean and felt snappy. It
+had a Vim mode plugin, which is a hard requirement for me. I liked it, and I
+liked that you could configure it by clicking options in a settings menu, and
+you could add plugins by searching a marketplace. That level of smoothness and
+ease was refreshing, coming from Vim.</p>
+<p>And so now I had two great options on my hands. My custom, hacked-together,
+mostly-working Neovim setup, which I&rsquo;d spent a lot of time customizing, setting
+up keyboard shortcuts, getting the colourscheme just the way I liked, all that
+kind of stuff. And on the other hand, VSCode, which was shiny and polished and
+seemed a bit easier to get up and running.</p>
+<p>So what did I do? I flip flopped, relentlessly. I&rsquo;d spend a week in one editor,
+a month in the other, an afternoon back in the first, three days in the other,
+then back to the first for six months. It got to be a bit silly. I was so
+indecisive. I liked them both, but just couldn&rsquo;t land on one over the other.</p>
+<p>And so, for the majority of the past ~2 years, I told myself, just stick with
+Neovim, make it yours, make it work, and don&rsquo;t let yourself get distracted. And
+I did, and it worked! Mostly. Things kept breaking, mostly related to external
+tools. I couldn&rsquo;t get Prettier to run on my Javascript codebases, or the Ruby
+langauge server wouldn&rsquo;t start up properly. I tried a few out-of-the-box Vim
+configurations (LunarVim, NvChad), but those were just too different from my own
+setup, that I eventually gave up on them. Not to mention that they had similar
+problems to my personalized setup as well.</p>
+<p>And so, finally, I decided. Let&rsquo;s go back to VSCode. Let&rsquo;s stick with it for a
+while, and see where we land. Turns out VSCode has a Neovim plugin, which lets
+you configure your editor with a Vim config file, and even lets you use Vim
+plugins. I&rsquo;ve got things configured mostly the way I like them. Prettier <em>just
+works</em> when I&rsquo;m in a javascript file. Tweaking config options doesn&rsquo;t required
+googling <em>&ldquo;how to do X in vim&rdquo;</em>. It&rsquo;s clean and polished, and relatively snappy.
+I&rsquo;m still missing a few keybinds I used to have, and I still prefer using iTerm
+instead of the VSCode built-in terminal. I miss <code>vim-fugitive</code> and <code>vim-test</code> in
+particular, but VSCode has decent replacements for both.</p>
+<p>So here we are. My roundabout journey to VSCode. I&rsquo;m committing myself to stick
+here for a while at least, to really give it a go. Part of the problem with
+Neovim was that I was so into the idea of customizing my workspace that I&rsquo;d
+often find myself spending more time tweaking my config than actually working.
+VSCode hasn&rsquo;t allowed me that kind of customizability yet, so I think that&rsquo;s a
+win. And here&rsquo;s the crux of the matter. A text editor is a tool. Yes, your tools
+need to be comfortable, they need to work well. But the more important thing is
+<em>what you do with that tool</em>, and for me, VSCode is good enough to let me be
+productive and happy. I&rsquo;d been on a search for the perfect text editor, when
+what I really needed was one that was <em>good enough</em> for me to get my work done.
+Don&rsquo;t let perfect be the enemy of good, as they always say, whoever they are.
+I&rsquo;m customizing VSCode, sure. But I&rsquo;m not spending anywhere near the time I was
+customizing Vim. Find something that works, make it comfortable for you, but
+focus on what that tool lets do you, rather than the tool itself.</p>
+<p>At least, that&rsquo;s what works for me.</p>
+<p>If you&rsquo;ve read this far, thank you for taking the time to listen to this rant!
+And now, off to check out the new shiny toy, <a href="https://zed.dev">Zed</a>!</p>
+
+
+  <footer class="mt-12">
+    <a href="/blog/" class="text-sky-600 hover:underline">
+      ← Back to Blog
+    </a>
+  </footer>
+
+</article>
+
+
+    <footer class="flex items-center justify-center">
+  <p class="mt-8 mb-4">
+    Mike Bowman &copy; 2016 - 2025
+  </p>
+</footer>
+
+  </body>
+</html>

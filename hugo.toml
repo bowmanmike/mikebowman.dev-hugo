@@ -19,3 +19,9 @@ title = 'Mike Bowman'
     disableWatch = true
     source = 'hugo_stats.json'
     target = 'assets/notwatching/hugo_stats.json'
+
+[frontmatter]
+  date = [":filename", ":default"]
+
+[permalinks]
+  blog = "/blog/:slug/"

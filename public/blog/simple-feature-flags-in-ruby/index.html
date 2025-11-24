@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Feature Flags in Ruby</title>
+    
+      
+  
+  
+    
+      <link rel="stylesheet" href="/css/main.css">
+    
+  
+
+
+    
+  </head>
+  <body class="bg-slate-50">
+    <header>
+  <h1>Mike Bowman</h1>
+</header>
+
+
+    
+<article class="max-w-3xl mx-auto px-4 py-12 prose prose-slate">
+
+  <header class="mb-8">
+    <h1 class="text-4xl font-bold mb-2">Simple Feature Flags in Ruby</h1>
+    <p class="text-sm text-slate-500">
+      September 1, 2022
+    </p>
+  </header>
+
+  <p>Deploying new code to production can be nerve-wracking. Things can break,
+unexpected behaviours can show up, all kinds of things can go sideways. It’s
+extremely important to be able to quickly revert changes, in the case that
+things go wrong unexpectedly. There are a bunch of different ways to approach
+this, but here I’ll be talking about Feature Flags.</p>
+<p><strong>NOTE</strong> There is some preamble here before we get to the code snippets. If
+you&rsquo;d like to skip directly to the full code, <a href="#full-code">click here</a>, or
+scroll to the bottom!</p>
+<p>First, what’s a feature flag? I’m sure there’s a proper technical definition,
+but as far as I’m concerned, a feature flag (sometimes called a feature toggle),
+is a mechanism to enable or disable features <em>on the fly</em> without deploying
+anything new or changing any code. Ideally, you should be able to enable or
+disable a feature instantaneously. Depending on the particular implementation,
+it may not be <em>quite</em> that fast, but within seconds-to-minutes, rather than
+minutes-to-hours.</p>
+<p>Another important use-case for feature flags is to regulate which of your users
+have access to a particular feature. This can be useful for things like
+beta-testing a new integration, A/B testing a new layout, or slowly opening the
+floodgates to ensure that a new code path can hold up to production traffic.</p>
+<p>Now, you may be thinking, isn’t this a solved problem? Aren’t there like, a
+million, libraries in every language that will implement this for you? And to
+that I say, yes, yes there are. Some very smart people have thought about this
+problem, and put good work into solving it. Libraries like
+<a href="https://github.com/jnunemaker/flipper">Flipper</a> for Ruby,
+<a href="https://github.com/tompave/fun_with_flags">Fun With Flags</a> for Elixir, and even
+full-on SAAS products like <a href="https://launchdarkly.com/">LaunchDarkly</a> can help
+you implement sophisticated, robust feature flags for your application. But! As
+we all know, sometimes, adding a library or integrating with a full-on external
+provider is WAY overkill for your needs. And that&rsquo;s why we&rsquo;re here today.</p>
+<p>In my experience, the simplest way to manage feature flags in a
+small-to-medium-sized application, especially with a small (or one-person) dev
+team, is to use environment variables. Check if the variable is enabled, and use
+that to determine whether or not to show the feature. Simple enough. However,
+this barebones approach quickly runs into some limitations. What if, for
+example, you need to check for the variable in multiple places? What if you need
+to send the feature flag status to a client-side application? What if a flag has
+more complex states than just <code>on</code> and <code>off</code>?</p>
+<p>When I came across this problem, I decided to put together a <em>slightly</em> more
+sophisticated system to streamline the process of checking the status of a flag,
+and for distributing that knowledge throughtout an application.</p>
+<p>At it’s core, my solution involved a class for each flag. Something like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NewLayoutFeatureFlag</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">class</span> <span style="color:#f92672">&lt;&lt;</span> self
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">value</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">ENV</span><span style="color:#f92672">[</span><span style="color:#e6db74">&#34;NEW_LAYOUT_ENABLED&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">parse</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span> <span style="color:#66d9ef">if</span> value <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> value<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;,&#34;</span>)<span style="color:#f92672">.</span>map(<span style="color:#f92672">&amp;</span><span style="color:#e6db74">:to_i</span>) <span style="color:#66d9ef">if</span> value<span style="color:#f92672">&amp;.</span>match?(<span style="color:#e6db74">/[0-9,]+/</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">enabled_for_user?</span>(user_id)
+</span></span><span style="display:flex;"><span>      parsed <span style="color:#f92672">=</span> parse
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> parsed <span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span><span style="color:#66d9ef">true</span>, <span style="color:#66d9ef">false</span><span style="color:#f92672">].</span>include?(parsed)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      parsed<span style="color:#f92672">.</span>include?(user_id)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>In my use-case, I had a flag that could be in one of 3 states: <code>on</code>, <code>off</code>, or
+enabled for a subset of users, identified by ID, which looks like this:
+<code>2,23,432</code> &ndash; a comma-separated list of IDs for which to enable the flag. In
+this particular case, the flag is stored in an environment variable, but that is
+certainly not a requirement of this method.</p>
+<p>For me, the key to this approach is the simplicity of it’s interface. Wherever I
+am in my application, I can call <code>NewLayoutFeatureFlag.enabled_for_user?</code> with
+the user ID, and get back whether or not the flag is enabled for that user. The
+Flag itself knows <em>how</em> to check whether a particular user should be able to use
+a feature. This interface allows the flag code to be as simple or as complex as
+it needs to be. It could do a DB lookup, it could store the state in Redis, or
+perform some work to determine whether or not the flag should be enabled.</p>
+<p>Having a simple interface like this allows you to use the flag in some really
+nice patterns. Need to enforce the flag in a controller action? No problem,
+stick it in a <code>before_action</code> call, like this.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FooController</span> <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">ApplicationController</span>
+</span></span><span style="display:flex;"><span>  before_action <span style="color:#e6db74">:check_new_layout_feature_flag</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">private</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">check_new_layout_feature_flag</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">unless</span> <span style="color:#66d9ef">NewLayoutFeatureFlag</span><span style="color:#f92672">.</span>enabled_for_user?(@user<span style="color:#f92672">.</span>id)
+</span></span><span style="display:flex;"><span>      render <span style="color:#e6db74">json</span>: {<span style="color:#e6db74">errors</span>: <span style="color:#e6db74">&#34;This feature is not enabled for this account&#34;</span>},
+</span></span><span style="display:flex;"><span>               <span style="color:#e6db74">status</span>: <span style="color:#e6db74">:unprocessable_entity</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>Need to share the state of the flags with other clients via an HTTP call?
+Simple. Something like this is a quick solution.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FeatureFlagsController</span> <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">ApplicationController</span>
+</span></span><span style="display:flex;"><span>  before_action <span style="color:#e6db74">:set_user</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">show</span>
+</span></span><span style="display:flex;"><span>    flag_klass <span style="color:#f92672">=</span> flags<span style="color:#f92672">[</span>params<span style="color:#f92672">[</span><span style="color:#e6db74">:flag</span><span style="color:#f92672">]]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    render <span style="color:#e6db74">json</span>: {
+</span></span><span style="display:flex;"><span>      params<span style="color:#f92672">[</span><span style="color:#e6db74">:flag</span><span style="color:#f92672">]</span> <span style="color:#f92672">=&gt;</span> <span style="color:#f92672">!!</span>flag_klass<span style="color:#f92672">&amp;.</span>enabled_for_user?(@user<span style="color:#f92672">.</span>id)
+</span></span><span style="display:flex;"><span>    }, <span style="color:#e6db74">status</span>: <span style="color:#e6db74">:ok</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">private</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">flags</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;new_layout_enabled&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">NewLayoutFeatureFlag</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># and in config/routes.rb</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>get <span style="color:#e6db74">&#34;/feature_flags/:flag&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;feature_flags#show&#34;</span>
+</span></span></code></pre></div><p>This kind of architecture makes it simple to add new flags. You could even add a
+<code>FeatureFlagsController#index</code> action to return the status of <em>all</em> the flags
+for a current user.</p>
+<p>Another important feature of this feature flag design is that the default
+position of all the flags is <code>off</code>. I don&rsquo;t want any functionality to sneak
+through the feature flags. If a user passes bad data, if something goes wrong
+internally, I want the feature turned off. Of course, that logic may change
+depending on the use case. But again, that speaks to the flexibility of this
+approach. You could even integrate this inteface with a third-party like
+LaunchDarkly or Flipper, if you decided you need to have a mix of in-house and
+externally-managed feature flags.</p>
+<p>While I’m sure this solution doesn’t cover all possible feature flag use-cases,
+I’ve found it’s a solid solution for my needs. It’s structured enough that I
+don’t need to think any further about how to check the status of a flag, but
+it’s flexible enough to allow me to use different types of flags for different
+use cases.</p>
+<p>To wrap up, I’d like to thank YOU, the reader, for making it this far! It’s a
+bit more text than I’d envisioned, but I hope it has some value. If you loved
+the article, or hated it, or have any tips or corrections, please reach out to
+me at <a href="mailto:mike@mikebowman.dev">mike@mikebowman.dev</a>! I’m also a freelance developer with lots of
+experience in Rails, Elixir/Phoenix, and React! If you like my work and could
+use some extra hands on your project, please don’t hesitate to reach out! I’m
+always open to new connections!</p>
+<h4 id="full-code">Full Code</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#75715e"># flag implementation</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NewLayoutFeatureFlag</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">class</span> <span style="color:#f92672">&lt;&lt;</span> self
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">value</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">ENV</span><span style="color:#f92672">[</span><span style="color:#e6db74">&#34;NEW_LAYOUT_ENABLED&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">parse</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span> <span style="color:#66d9ef">if</span> value <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> value<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;,&#34;</span>)<span style="color:#f92672">.</span>map(<span style="color:#f92672">&amp;</span><span style="color:#e6db74">:to_i</span>) <span style="color:#66d9ef">if</span> value<span style="color:#f92672">&amp;.</span>match?(<span style="color:#e6db74">/[0-9,]+/</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">enabled_for_user?</span>(user_id)
+</span></span><span style="display:flex;"><span>      parsed <span style="color:#f92672">=</span> parse
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> parsed <span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span><span style="color:#66d9ef">true</span>, <span style="color:#66d9ef">false</span><span style="color:#f92672">].</span>include?(parsed)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      parsed<span style="color:#f92672">.</span>include?(user_id)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># controller</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FeatureFlagsController</span> <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">ApplicationController</span>
+</span></span><span style="display:flex;"><span>  before_action <span style="color:#e6db74">:set_user</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">show</span>
+</span></span><span style="display:flex;"><span>    flag_klass <span style="color:#f92672">=</span> flags<span style="color:#f92672">[</span>params<span style="color:#f92672">[</span><span style="color:#e6db74">:flag</span><span style="color:#f92672">]]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    render <span style="color:#e6db74">json</span>: {
+</span></span><span style="display:flex;"><span>      params<span style="color:#f92672">[</span><span style="color:#e6db74">:flag</span><span style="color:#f92672">]</span> <span style="color:#f92672">=&gt;</span> <span style="color:#f92672">!!</span>flag_klass<span style="color:#f92672">&amp;.</span>enabled_for_user?(@user<span style="color:#f92672">.</span>id)
+</span></span><span style="display:flex;"><span>    }, <span style="color:#e6db74">status</span>: <span style="color:#e6db74">:ok</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">private</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">flags</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;new_layout_enabled&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">NewLayoutFeatureFlag</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">set_user</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># set user from params, session, etc.</span>
+</span></span><span style="display:flex;"><span>    @user <span style="color:#f92672">=</span> <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># config/routes.rb</span>
+</span></span><span style="display:flex;"><span>get <span style="color:#e6db74">&#34;/feature_flags/:flag&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;feature_flags#show&#34;</span>
+</span></span></code></pre></div>
+
+  <footer class="mt-12">
+    <a href="/blog/" class="text-sky-600 hover:underline">
+      ← Back to Blog
+    </a>
+  </footer>
+
+</article>
+
+
+    <footer class="flex items-center justify-center">
+  <p class="mt-8 mb-4">
+    Mike Bowman &copy; 2016 - 2025
+  </p>
+</footer>
+
+  </body>
+</html>

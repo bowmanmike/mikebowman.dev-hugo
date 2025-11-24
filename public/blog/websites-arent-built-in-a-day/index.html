@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Websites Aren&#39;t Built In A Day</title>
+    
+      
+  
+  
+    
+      <link rel="stylesheet" href="/css/main.css">
+    
+  
+
+
+    
+  </head>
+  <body class="bg-slate-50">
+    <header>
+  <h1>Mike Bowman</h1>
+</header>
+
+
+    
+<article class="max-w-3xl mx-auto px-4 py-12 prose prose-slate">
+
+  <header class="mb-8">
+    <h1 class="text-4xl font-bold mb-2">Websites Aren&#39;t Built In A Day</h1>
+    <p class="text-sm text-slate-500">
+      January 17, 2022
+    </p>
+  </header>
+
+  <p>So let&rsquo;s talk about blogs. This one, in particular, and its evolution over the
+years. After all, this site wasn&rsquo;t built in a day, and neither was Rome. That&rsquo;s
+the expression, right?</p>
+<p>This post will be in two parts. First, I&rsquo;ll talk about the history of my
+personal site, in its various incarnations, including this one. After, I&rsquo;ll get
+a bit technical, and get into the nitty gritty of how this new site works. If
+that&rsquo;s not your thing, my apologies, but feel free to just skip it!</p>
+<p>Early on in my days at Bitmaker (the coding bootcamp I attended in 2016), they
+stressed to us the importance of maintaining an online presense. This seemed
+like a good idea to me, so I went home that night and started a
+<a href="https://medium.com/@mikebowman">blog on Medium</a>. It looked something like this,
+and it&rsquo;s actually still live as of January 17, 2022.</p>
+<p><img src="./medium-site.png" alt="Medium Site"></p>
+<p>Nothing too fancy, but it certainly got the job done. Medium is a popular
+writing platform among tech types, and it worked for me for a while. However,
+pretty soon I got an itch. An itch to do something a little more challenging.
+Something a little more fancy, a little more tech-y. I wanted to boost my tech
+street-cred, more or less. I figured that the best way to get that done would be
+to build my own site, and host it on my very own domain name. So I went off and
+bought <a href="https://bowmanmike.com">bowmanmike.com</a>. My first choice,
+<em>mikebowman.com</em>, was (and still is) owned by a real-estate agent from Dallas,
+so that one was a no-go. But <a href="https://bowmanmike.com">bowmanmike.com</a> seemed
+like a solid option.</p>
+<p>So there I was, shiny new domain name in hand. I got to thinking, how does one
+build a blog? At some point during the bootcamp, we were introduced to
+<a href="https://jekyllrb.com">Jekyll</a>. It fit the bill perfectly. I was able to write
+my blog posts using <a href="https://www.markdownguide.org/">Markdown</a>, which I liked.
+It was simple to set up, had lots of pre-made themes available, and was
+reasonably customizable. I got it wired up to my own domain name, and off I
+went. This was a solid solution, if somewhat visually unremarkable. It isn&rsquo;t
+live on the internet anywhere at the moment, but it looked like this.</p>
+<p><img src="./jekyll-site.png" alt="Jekyll Site"></p>
+<p>Plain, simple, functional.</p>
+<p>But kinda boring, and not really very technically interesting.</p>
+<p>As you can see from the post history here, the blog kinda withered on the vine
+for a few years. I didn&rsquo;t post at all between 2018 and 2020. I didn&rsquo;t really
+have the time or energy to write, and I probably also thought that I didn&rsquo;t have
+anything worth writing about. Not sure if that was actually true, but whatever
+the reasoning, I went for several years without writing any posts.</p>
+<p>But! I still wanted to exist on the web. I still had my domain name, so I
+figured I should at least put up a simple page with some contact info and
+whatnot. I never got very far down the road of building this particular site,
+but it did exist for a while, and it looked like this.</p>
+<p><img src="./raw-html-site.png" alt="Raw HTML Site"></p>
+<p>Very plain, but at least if somebody were to visit
+<a href="https://bowmanmike.com">bowmanmike.com</a>, there&rsquo;d be something there.</p>
+<p>This brings us to today. Obviously, you&rsquo;re looking at my new site, so there&rsquo;s
+not much to add here. I&rsquo;m really happy with the design. It&rsquo;s not a template,
+it&rsquo;s an original design that I worked out with some assistance from some people
+with better eyes for design than I have. But ultimately, it&rsquo;s my own. I can say
+I built it from scratch. I know the ins and outs, I know how it works. I know
+where all the styles are coming from, and there&rsquo;s no template magic hidden
+behind the scenes. I&rsquo;m thrilled with the result, and I hope you like it too!</p>
+<p>This brings us to the technical portion. Like I said, if this isn&rsquo;t your thing,
+feel free to stop reading, and maybe click on one of the other pages I&rsquo;ve got
+here! For those brave enough, lets forge ahead!</p>
+<p>This site is generated using <a href="https://gatsbyjs.com">Gatsby</a>. Gatsby, in many
+ways, is a spiritual successor to Static Site Generators like
+<a href="https://jeklyyrg.com">Jekyll</a> or <a href="https://gohugo.io/">Hugo</a>. Those tools allow
+you to generate a full site ahead of time, and just render out raw HTML (and
+some Javacsript, if you want). This means all you need to host it a static site,
+which has a bunch of benefits when it comes to things like simplicity of
+hosting, deployment, SEO, speed, accessibility&hellip; all that good stuff. Browsers
+are <em>really</em> good at optimising HTML, and servers and hosting platforms are also
+<em>really</em> good at optimising their delivery.</p>
+<p>However, they can be a bit limited in their functionality. As soon as you need
+to do things like dynamically load data, they lose a lot of their benefits. For
+example, if you&rsquo;re loading your blog posts from a headless CMS or something
+similar, you&rsquo;ll need to query all that data at runtime, which takes a non-zero
+amount of time. There isn&rsquo;t really an easy way around it. This is where Gatsby
+(and other, more modern, Static Site Generators) shine.</p>
+<p>Gatsby does a lot more work for you at build time. Gatsby has the concept of
+&ldquo;sources&rdquo;, which are adapters to various data sources. This blog, for example,
+exists as a collection of markdown files. In order to do some magic like
+pagination, or showing a preview of the most recent post on the home page,
+they&rsquo;re imported into Gatsby through a markdown transformer, called
+<a href="https://remark.js.org/">Remark</a>. This brings us to the key to Gatsby&rsquo;s ability
+to dynamically generate a site: it&rsquo;s GraphQL API.</p>
+<p>Gatsby lets you build your static site using React, and it uses GraphQL at
+build-time to dynamically generate various pages and pieces of data. When the
+site builds, Gatsby spins up an GraphQL API. In your React components (and a few
+other places, but that&rsquo;s not really important right now), you can define queries
+that run <em>at build time</em> against that API. This lets you, for example,
+dynamically load your blog posts to build an index page with pagination, or a
+preview component. These pages are then rendered to static HTML and served to
+the client just like Jekyll.</p>
+<p>Gatsby does sprinkle in some Javascript on the client-side to optimize a few
+things, such as page navigation and image loading, but the key point here is
+that the site works <em>perfectly well</em> without Javascript. At it&rsquo;s core, it&rsquo;s a
+simple HTML and CSS page that the browser renders. No magic, no dynamically
+loading data, just a quick, snappy, browser-native page.</p>
+<p>Speaking of CSS, since Gatsby is a React app at build-time, you can use whatever
+CSS strategy you like. Inline CSS, CSS Modules, Styled Components, PostCSS,
+everything you&rsquo;d expect to see in a modern React app is available. Personally, I
+like <a href="https://tailwindcss.com">TailwindCSS</a>, but you may have other opinions on
+the matter. Fortunately, Gatsby does not care a lick about how you want to do
+your CSS, so style those components to your heart&rsquo;s content, friendo.</p>
+<p>This is far from a full overview of what Gatsby is capable of, but here&rsquo;s a few
+other things it can take care of for you:</p>
+<ul>
+<li>Typescript! Yes, you can build your Gatsby app in Typescript. I haven&rsquo;t used
+it here, but moving over to TS is on my to-do list!</li>
+<li>Accessibility! Gatsby comes with some nice Accessibility features built in,
+like adding ARIA attributes to your navigation link, progressively loading and
+scaling images for those on slower connections, and more!</li>
+<li>Progressive Web Apps and offline access</li>
+<li>A rich ecosystem of plugins that can help with the difficult or boring parts
+of web development.</li>
+</ul>
+<p>While there&rsquo;s lots more of Gatsby you can investigate, this is a quick rundown
+of how it works, and how I&rsquo;m using it. I hope you found something useful in
+here! There&rsquo;s some links below that may provide more context for some of the
+tech discussed in this post.</p>
+<p>Until next time, cheers!</p>
+<h4 id="links">Links</h4>
+<ul>
+<li><a href="https://gatsbyjs.com">GatsbyJS</a></li>
+<li><a href="https://tailwindcss.com">TailwindCSS</a></li>
+<li><a href="https://reactjs.com">React</a></li>
+<li><a href="https://graphql.org/">GraphQL</a></li>
+</ul>
+
+
+  <footer class="mt-12">
+    <a href="/blog/" class="text-sky-600 hover:underline">
+      ← Back to Blog
+    </a>
+  </footer>
+
+</article>
+
+
+    <footer class="flex items-center justify-center">
+  <p class="mt-8 mb-4">
+    Mike Bowman &copy; 2016 - 2025
+  </p>
+</footer>
+
+  </body>
+</html>

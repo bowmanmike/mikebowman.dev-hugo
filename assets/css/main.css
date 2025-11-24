@@ -1,2 +1,91 @@
 @import "tailwindcss";
 @source "hugo_stats.json";
+
+.post-body {
+    @apply text-slate-800 leading-relaxed;
+  }
+
+  .post-body > * + * {
+    @apply mt-4;
+  }
+
+  .post-body h1 {
+    @apply text-3xl font-bold mt-8 mb-4;
+  }
+
+  .post-body h2 {
+    @apply text-2xl font-semibold mt-8 mb-3;
+  }
+
+  .post-body h3 {
+    @apply text-xl font-semibold mt-6 mb-2;
+  }
+
+  .post-body h4 {
+    @apply text-lg font-semibold mt-4 mb-2;
+  }
+
+  .post-body p {
+    @apply text-base;
+  }
+
+  .post-body a {
+    @apply text-sky-600 underline underline-offset-2 hover:text-sky-700;
+  }
+
+  .post-body strong {
+    @apply font-semibold;
+  }
+
+  .post-body em {
+    @apply italic;
+  }
+
+  .post-body ul {
+    @apply list-disc pl-6 mt-4;
+  }
+
+  .post-body ol {
+    @apply list-decimal pl-6 mt-4;
+  }
+
+  .post-body li {
+    @apply mt-1;
+  }
+
+  .post-body blockquote {
+    @apply border-l-4 border-slate-300 pl-4 italic text-slate-600;
+  }
+
+  .post-body img {
+    @apply my-6 rounded-lg;
+  }
+
+  .post-body hr {
+    @apply my-8 border-t border-slate-200;
+  }
+
+  .post-body code {
+    @apply rounded bg-slate-800/90 text-slate-100 px-1 py-0.5 text-sm;
+  }
+
+  .post-body pre {
+    @apply mt-6 mb-6 rounded-lg bg-slate-900 text-slate-100 p-4 overflow-x-auto text-sm;
+  }
+
+  .post-body pre code {
+    @apply bg-transparent p-0 text-inherit;
+  }
+
+  .post-body table {
+    @apply w-full border-collapse text-sm my-6;
+  }
+
+  .post-body th,
+  .post-body td {
+    @apply border border-slate-200 px-3 py-2;
+  }
+
+  .post-body th {
+    @apply bg-slate-50 font-semibold;
+  }
